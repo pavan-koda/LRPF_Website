@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File a Grievance | LRPF</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+
+    <!-- Floating Social Sidebar -->
+    <div class="social-sidebar">
+        <a href="#" class="twitter" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="youtube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">LRPF</div>
+                <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="work.html">Our Work</a></li>
+                    <li><a href="get-involved.html">Get Involved</a></li>
+                    <li><a href="resources.html">Resources</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="grievance.html" class="nav-btn">Report Grievance</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Grievance Section -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <h2>File a Grievance</h2>
+            <p class="text-center" style="margin-bottom: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                If you possess credible information relating to corruption, misuse of foreign contributions, or activities that threaten India’s security, please report it below. Your identity will be protected.
+            </p>
+            
+            <div class="form-container">
+                <form action="#" method="POST">
+                    <div class="form-group">
+                        <label for="g-name">Your Name (Optional)</label>
+                        <input type="text" id="g-name" class="form-control" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="g-email">Email Address</label>
+                        <input type="email" id="g-email" class="form-control" placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="g-phone">Phone Number</label>
+                        <input type="tel" id="g-phone" class="form-control" placeholder="+91 XXXXX XXXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="g-type">Type of Grievance</label>
+                        <select id="g-type" class="form-control" required>
+                            <option value="" disabled selected>Select the issue type...</option>
+                            <option value="fcra">FCRA Violation / Financial Irregularity</option>
+                            <option value="child_rights">Child Rights Violation</option>
+                            <option value="human_rights">Human Rights Violation</option>
+                            <option value="encroachment">Illegal Encroachment / Land Grabbing</option>
+                            <option value="national_security">National Security Threat</option>
+                            <option value="corruption">Corruption / Misuse of Power</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="g-desc">Description of Incident</label>
+                        <textarea id="g-desc" class="form-control" placeholder="Please provide details about the incident, location, and parties involved..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="g-evidence">Upload Evidence (Optional)</label>
+                        <input type="file" id="g-evidence" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%;">Submit Grievance</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h4>LRPF</h4>
+                    <p>Protecting Rights. Ensuring Accountability.</p>
+                    <p>Email: contact.lrpf@gmail.com</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="work.html">Our Work</a></li>
+                        <li><a href="resources.html">Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow Us</h4>
+                    <div class="social-links-footer">
+                        <a href="#" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">&copy; 2024 Legal Rights Protection Forum. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
