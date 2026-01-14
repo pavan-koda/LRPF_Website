@@ -135,6 +135,8 @@ nav {
 .read-more-btn { margin-top: 15px; color: var(--secondary-color); font-weight: bold; font-size: 0.9rem; }
 .read-more-btn::after { content: 'Read More'; }
 .card.interactive.active .read-more-btn::after { content: 'Read Less'; }
+.card.interactive.plus-icon::after { content: '+'; position: absolute; top: 25px; right: 25px; font-size: 1.5rem; color: var(--secondary-color); font-weight: bold; transition: 0.3s; }
+.card.interactive.plus-icon.active::after { content: '-'; transform: rotate(180deg); }
 
 .card .full-content { display: none; margin-top: 15px; color: var(--text-color); border-top: 1px solid #eee; padding-top: 15px; }
 .card.interactive.active .full-content { display: block; animation: fadeIn 0.4s ease; }
