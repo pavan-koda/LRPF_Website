@@ -209,7 +209,6 @@ footer {
     .menu-toggle { display: block; }
     .hero h1 { font-size: 2rem; }
     
-    .social-sidebar { display: none; }
     
     .grid-3, .grid-2, .gallery-grid, .resources-grid { grid-template-columns: 1fr; }
     
@@ -283,6 +282,39 @@ footer {
 .social-sidebar .facebook { background: #1877F2; }
 .social-sidebar .threads { background: #000000; }
 .social-sidebar .youtube { background: #FF0000; }
+
+.social-toggle { display: none; }
+
+@media (max-width: 768px) {
+    .social-sidebar a {
+        display: flex;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .social-sidebar.visible a {
+        width: 45px;
+        height: 45px;
+        opacity: 1;
+    }
+    .social-toggle {
+        display: flex;
+        justify-content: center; align-items: center;
+        width: 25px; height: 45px;
+        background: var(--secondary-color); color: white;
+        cursor: pointer; font-size: 1.2rem;
+        transition: all 0.4s ease;
+        border-radius: 0 6px 6px 0;
+    }
+    .social-sidebar.visible .social-toggle {
+        width: 0;
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+    }
+}
 
 /* --- Footer Social Icons --- */
 .social-links-footer { display: flex; gap: 15px; }
