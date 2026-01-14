@@ -65,7 +65,8 @@ nav {
     align-items: center;
 }
 
-.logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 1px; }
+.logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+.logo img { height: 50px; width: auto; }
 
 .nav-links { display: flex; gap: 25px; }
 .nav-links a { color: #ecf0f1; font-weight: 500; font-size: 0.95rem; }
@@ -112,6 +113,12 @@ nav {
     gap: 30px;
 }
 
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
 .card {
     background: var(--white);
     padding: 30px;
@@ -125,8 +132,10 @@ nav {
 /* --- Interactive Cards (Expandable) --- */
 .card.interactive { cursor: pointer; position: relative; }
 .card.interactive:hover { transform: translateY(-3px); }
-.card.interactive::after { content: '+'; position: absolute; top: 25px; right: 25px; font-size: 1.5rem; color: var(--secondary-color); font-weight: bold; transition: 0.3s; }
-.card.interactive.active::after { content: '-'; transform: rotate(180deg); }
+.read-more-btn { margin-top: 15px; color: var(--secondary-color); font-weight: bold; font-size: 0.9rem; }
+.read-more-btn::after { content: 'Read More'; }
+.card.interactive.active .read-more-btn::after { content: 'Read Less'; }
+
 .card .full-content { display: none; margin-top: 15px; color: var(--text-color); border-top: 1px solid #eee; padding-top: 15px; }
 .card.interactive.active .full-content { display: block; animation: fadeIn 0.4s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -200,7 +209,7 @@ footer {
     
     .social-sidebar { display: none; }
     
-    .grid-3, .gallery-grid, .resources-grid { grid-template-columns: 1fr; }
+    .grid-3, .grid-2, .gallery-grid, .resources-grid { grid-template-columns: 1fr; }
     
     .section-padding { padding: 40px 0; }
     
@@ -269,6 +278,8 @@ footer {
 .social-sidebar a:hover { width: 60px; }
 .social-sidebar .twitter { background: #000000; }
 .social-sidebar .instagram { background: #E1306C; }
+.social-sidebar .facebook { background: #1877F2; }
+.social-sidebar .threads { background: #000000; }
 .social-sidebar .youtube { background: #FF0000; }
 
 /* --- Footer Social Icons --- */
