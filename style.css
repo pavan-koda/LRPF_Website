@@ -66,7 +66,7 @@ nav {
 }
 
 .logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
-.logo img { height: 50px; width: auto; }
+.logo img { height: 50px; width: auto; max-height: 50px; }
 
 .nav-links { display: flex; gap: 25px; }
 .nav-links a { color: #ecf0f1; font-weight: 500; font-size: 0.95rem; }
