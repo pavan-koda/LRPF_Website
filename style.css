@@ -65,8 +65,11 @@ nav {
     align-items: center;
 }
 
-.logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
-.logo img { height: 50px; width: auto; max-height: 50px; }
+.logo { display: flex; align-items: center; gap: 16px; }
+.logo img { height: 80px; width: auto; max-height: 80px; }
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; color: #ecf0f1; }
+.logo-text .logo-line1 { font-size: 1.4rem; font-weight: 900; letter-spacing: 0.3px; }
+.logo-text .logo-line2 { font-size: 1rem; font-weight: 700; margin-top: 2px; opacity: 0.95; }
 
 .nav-links { display: flex; gap: 25px; }
 .nav-links a { color: #ecf0f1; font-weight: 500; font-size: 0.95rem; }
@@ -398,6 +401,87 @@ footer {
 .info-item a:hover {
     color: var(--secondary-color);
 }
+
+/* --- New layout styles for updated homepage --- */
+.donate-btn {
+    background: #c0392b;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 24px;
+    font-weight: 700;
+    margin-left: 20px;
+}
+.donate-btn:hover { background: #a93226; }
+
+.hero {
+    position: relative;
+    background: linear-gradient(rgba(10,10,10,0.25), rgba(10,10,10,0.25)), url('Images/hero.jpg');
+    background-size: cover;
+    background-position: center center;
+    color: var(--white);
+    padding: 140px 0;
+}
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(rgba(10,10,10,0.35), rgba(10,10,10,0.35)); }
+.hero-inner { position: relative; z-index: 2; }
+.hero-content { max-width: 900px; margin: 0 auto; text-align: center; }
+.hero h1 { font-size: 3.2rem; letter-spacing: 1px; margin-bottom: 12px; }
+.hero .lead { font-size: 1.15rem; opacity: 0.95; margin-bottom: 22px; }
+.hero-cta .btn { padding: 12px 28px; }
+.btn-large { padding: 14px 36px; font-size: 1.1rem; }
+
+.features-grid { gap: 24px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.feature-card { text-align: center; padding: 30px 20px; }
+.feature-icon { font-size: 36px; color: var(--secondary-color); margin-bottom: 12px; }
+.feature-card h3 { margin: 10px 0 8px; }
+
+.support-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 24px; }
+.cta-box { color: white; padding: 22px; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); text-align: left; }
+.cta-box h4 { margin-bottom: 6px; }
+.cta-box p { opacity: 0.95; margin-bottom: 12px; }
+.small-btn { display: inline-block; background: rgba(255,255,255,0.12); color: #fff; padding: 8px 12px; border-radius: 4px; font-weight: 700; }
+.small-btn:hover { background: rgba(255,255,255,0.18); }
+.cta-box.blue { background: #2f7dbb; }
+.cta-box.red { background: #b03a34; }
+.cta-box.green { background: #2e8b57; }
+.cta-box.navy { background: #3a5568; }
+
+.get-involved-cta { margin-top: 28px; }
+
+.values-bar { background: #f5f5f5; padding: 18px 0; }
+.values-inner { display: flex; gap: 20px; justify-content: space-around; align-items: center; }
+.value-item { display: flex; gap: 10px; align-items: center; color: var(--primary-color); font-weight: 600; }
+.value-item i { font-size: 20px; color: var(--secondary-color); }
+
+@media (max-width: 768px) {
+    .hero { padding: 80px 0; }
+    .hero h1 { font-size: 1.8rem; }
+    .values-inner { flex-direction: column; gap: 12px; }
+}
+
+/* --- Section heading styles to match provided design --- */
+h2.section-title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 2.6rem;
+    color: #0e3140;
+    text-align: center;
+    margin-bottom: 6px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+}
+
+h2.section-title::after { display: none; }
+
+.muted {
+    display: block;
+    text-align: center;
+    color: #6b6f73;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+/* Slightly tighten spacing for boxed CTAs under the heading */
+.support-grid { margin-top: 18px; }
 
 .social-links-contact {
     display: flex;
