@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Legal Rights Protection Forum</title>
+    <link rel="icon" href="Images/Logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        a { text-decoration: none; }
+
+        /* ===== LOGIN SCREEN ===== */
+        #login-screen {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+        }
+        .login-box {
+            background: #fff; padding: 48px 42px; border-radius: 14px;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.35); width: 380px; text-align: center;
+        }
+        .login-box .login-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 18px; }
+        .login-box h2 { font-size: 1.7rem; color: #1a252f; margin-bottom: 4px; }
+        .login-box .login-subtitle { color: #888; font-size: 0.9rem; margin-bottom: 28px; }
+        .login-field { margin-bottom: 18px; text-align: left; }
+        .login-field label { display: block; font-weight: 600; margin-bottom: 6px; color: #444; font-size: 0.9rem; }
+        .login-field input {
+            width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 8px;
+            font-size: 1rem; transition: border-color 0.3s; background: #fafafa;
+        }
+        .login-field input:focus { outline: none; border-color: #c0392b; background: #fff; }
+        .login-btn {
+            width: 100%; padding: 14px; background: #c0392b; color: #fff; border: none;
+            border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.3s;
+        }
+        .login-btn:hover { background: #a93226; }
+        .login-error { color: #c0392b; margin-top: 12px; font-size: 0.9rem; min-height: 22px; }
+
+        /* ===== ADMIN PANEL LAYOUT ===== */
+        #admin-panel { display: none; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px; background: #1a252f; color: #ecf0f1;
+            display: flex; flex-direction: column; position: fixed;
+            top: 0; left: 0; bottom: 0; overflow-y: auto; z-index: 100;
+        }
+        .sidebar-header {
+            padding: 22px 18px; display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar-header img { width: 40px; height: 40px; object-fit: contain; background: #fff; border-radius: 6px; padding: 3px; }
+        .sidebar-brand { line-height: 1.2; }
+        .sidebar-brand strong { display: block; font-size: 0.92rem; color: #ecf0f1; }
+        .sidebar-brand span { font-size: 0.75rem; color: #95a5a6; }
+        .sidebar-nav { flex: 1; padding: 12px 0; }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 11px 18px;
+            color: #bdc3c7; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
+            border: none; background: none; width: 100%; text-align: left; border-radius: 0;
+        }
+        .nav-item i { width: 18px; text-align: center; font-size: 0.95rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.07); color: #ecf0f1; }
+        .nav-item.active { background: #c0392b; color: #fff; }
+        .sidebar-footer { padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .logout-btn {
+            width: 100%; padding: 10px; background: transparent; color: #bdc3c7;
+            border: 1.5px solid rgba(255,255,255,0.15); border-radius: 6px;
+            cursor: pointer; font-size: 0.88rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;
+        }
+        .logout-btn:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+        /* Main Content */
+        .main-content { margin-left: 240px; padding: 28px 32px; min-height: 100vh; }
+        .page-header { margin-bottom: 24px; }
+        .page-header h1 { font-size: 1.75rem; color: #1a252f; margin-bottom: 4px; }
+        .page-header p { color: #666; font-size: 0.92rem; }
+        .site-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .site-link {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+            background: #1a252f; color: #fff; border-radius: 20px; font-size: 0.82rem; transition: background 0.2s;
+        }
+        .site-link:hover { background: #c0392b; }
+
+        /* Section Cards */
+        .section-card {
+            background: #fff; border-radius: 10px; padding: 26px 28px;
+            margin-bottom: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-top: 4px solid #c0392b;
+        }
+        .section-card h2 {
+            font-size: 1.05rem; color: #1a252f; margin-bottom: 18px; padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 9px;
+        }
+        .section-card h2 i { color: #c0392b; }
+
+        /* Forms */
+        .form-row { margin-bottom: 16px; }
+        .form-row label { display: block; font-weight: 600; margin-bottom: 5px; color: #444; font-size: 0.875rem; }
+        .form-row input[type="text"],
+        .form-row input[type="email"],
+        .form-row input[type="url"],
+        .form-row input[type="password"],
+        .form-row textarea,
+        .form-row select {
+            width: 100%; padding: 10px 13px; border: 1.5px solid #e0e0e0; border-radius: 6px;
+            font-size: 0.92rem; font-family: inherit; transition: border-color 0.3s; background: #fafafa;
+        }
+        .form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+            outline: none; border-color: #c0392b; background: #fff;
+        }
+        .form-row textarea { resize: vertical; min-height: 85px; line-height: 1.5; }
+        .form-row small { display: block; color: #888; font-size: 0.78rem; margin-top: 4px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+        /* Card Groups (for repeating sections) */
+        .card-group {
+            border: 1.5px solid #ebebeb; border-radius: 8px; padding: 18px;
+            margin-bottom: 14px; background: #fafafa;
+        }
+        .card-group-label {
+            font-weight: 700; color: #1a252f; margin-bottom: 12px; font-size: 0.82rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* Image Upload */
+        .img-upload-section {
+            display: flex; align-items: flex-start; gap: 18px; padding: 14px;
+            background: #f8f8f8; border-radius: 8px; border: 1.5px dashed #ddd; margin-bottom: 14px;
+        }
+        .img-preview-box {
+            flex-shrink: 0; width: 140px; height: 95px; border-radius: 6px; overflow: hidden;
+            background: #e8e8e8; display: flex; align-items: center; justify-content: center;
+            border: 1px solid #ddd;
+        }
+        .img-preview-box.wide { width: 220px; height: 110px; }
+        .img-preview-box.logo-box { width: 100px; height: 100px; }
+        .img-preview-box img { width: 100%; height: 100%; object-fit: contain; }
+        .img-upload-info { flex: 1; }
+        .img-upload-info label { font-weight: 600; display: block; margin-bottom: 8px; font-size: 0.875rem; color: #444; }
+        .img-upload-info input[type="file"] {
+            width: 100%; padding: 8px; border: 1.5px solid #e0e0e0;
+            border-radius: 6px; cursor: pointer; background: #fff; font-size: 0.88rem;
+        }
+        .img-upload-info small { display: block; color: #888; font-size: 0.78rem; margin-top: 5px; }
+
+        /* Buttons */
+        .save-btn {
+            background: #c0392b; color: #fff; border: none; padding: 10px 26px;
+            border-radius: 6px; font-size: 0.92rem; font-weight: 700; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px; transition: background 0.3s; margin-top: 6px;
+        }
+        .save-btn:hover { background: #a93226; }
+        .secondary-btn {
+            background: #ecf0f1; color: #333; border: 1.5px solid #ddd; padding: 9px 18px;
+            border-radius: 6px; font-size: 0.88rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;
+        }
+        .secondary-btn:hover { background: #dfe6e9; }
+        .danger-btn {
+            background: #fff; color: #c0392b; border: 2px solid #c0392b; padding: 9px 18px;
+            border-radius: 6px; font-size: 0.88rem; cursor: pointer; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;
+        }
+        .danger-btn:hover { background: #c0392b; color: #fff; }
+        .add-btn {
+            background: #27ae60; color: #fff; border: none; padding: 10px 20px;
+            border-radius: 6px; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 7px; transition: background 0.3s;
+        }
+        .add-btn:hover { background: #1e8449; }
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+
+        /* Gallery Admin */
+        .gallery-admin-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+            gap: 14px; margin-bottom: 20px;
+        }
+        .gallery-admin-item {
+            background: #fff; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1.5px solid #eee;
+        }
+        .gallery-admin-item .item-img {
+            width: 100%; height: 130px; object-fit: cover; display: block; background: #eee;
+        }
+        .gallery-admin-item-body { padding: 10px; }
+        .gallery-admin-item-body input {
+            width: 100%; padding: 6px 9px; border: 1.5px solid #e0e0e0; border-radius: 4px;
+            font-size: 0.82rem; margin-bottom: 7px; font-family: inherit;
+        }
+        .gallery-admin-item-body input:focus { outline: none; border-color: #c0392b; }
+        .remove-gallery-btn {
+            width: 100%; padding: 6px; background: #fff; color: #e74c3c;
+            border: 1.5px solid #e74c3c; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+        }
+        .remove-gallery-btn:hover { background: #e74c3c; color: #fff; }
+        .gallery-add-box {
+            border: 2px dashed #c0392b; border-radius: 8px; padding: 22px;
+            background: #fff9f9; margin-bottom: 14px;
+        }
+        .gallery-add-box h3 { color: #c0392b; margin-bottom: 14px; font-size: 0.95rem; }
+        .gallery-add-inputs { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+        .gallery-add-inputs .form-row { margin-bottom: 0; flex: 1; min-width: 160px; }
+        .gallery-no-items { color: #aaa; text-align: center; padding: 24px; font-style: italic; }
+
+        /* Notes */
+        .status-note {
+            background: #eafaf1; border: 1px solid #a9dfbf; color: #1e8449;
+            padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 14px;
+        }
+        .warning-note {
+            background: #fef9e7; border: 1px solid #f9e79f; color: #7d6608;
+            padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 14px;
+        }
+        .danger-note {
+            background: #fdedec; border: 1px solid #f5b7b1; color: #922b21;
+            padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 14px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 28px; right: 28px; background: #27ae60; color: #fff;
+            padding: 13px 22px; border-radius: 8px; font-weight: 600; opacity: 0;
+            transform: translateY(20px); transition: all 0.35s; z-index: 9999;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18); font-size: 0.92rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error-toast { background: #e74c3c; }
+
+        /* Tab content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Divider */
+        hr.divider { border: none; border-top: 1px solid #eee; margin: 18px 0; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; }
+            .main-content { margin-left: 200px; padding: 18px 16px; }
+            .img-upload-section { flex-direction: column; }
+            .img-preview-box, .img-preview-box.wide { width: 100%; height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="login-screen">
+    <div class="login-box">
+        <img src="Images/Logo.png" alt="LRPF Logo" class="login-logo">
+        <h2>Admin Panel</h2>
+        <p class="login-subtitle">Legal Rights Protection Forum</p>
+        <form id="login-form">
+            <div class="login-field">
+                <label for="pwd-input"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="pwd-input" placeholder="Enter admin password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </form>
+        <p class="login-error" id="login-error"></p>
+    </div>
+</div>
+
+<!-- ==================== ADMIN PANEL ==================== -->
+<div id="admin-panel">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="Images/Logo.png" alt="LRPF" id="sidebar-logo">
+            <div class="sidebar-brand">
+                <strong>LRPF Admin</strong>
+                <span>Content Manager</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" data-tab="home"><i class="fas fa-home"></i> Home Page</button>
+            <button class="nav-item" data-tab="about"><i class="fas fa-info-circle"></i> About</button>
+            <button class="nav-item" data-tab="work"><i class="fas fa-gavel"></i> Our Work</button>
+            <button class="nav-item" data-tab="gallery"><i class="fas fa-images"></i> Gallery</button>
+            <button class="nav-item" data-tab="getinvolved"><i class="fas fa-hands-helping"></i> Get Involved</button>
+            <button class="nav-item" data-tab="resources"><i class="fas fa-book-open"></i> Resources</button>
+            <button class="nav-item" data-tab="contact"><i class="fas fa-envelope"></i> Contact</button>
+            <button class="nav-item" data-tab="grievance"><i class="fas fa-exclamation-circle"></i> Grievance</button>
+            <button class="nav-item" data-tab="settings"><i class="fas fa-cog"></i> Site Settings</button>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Toast -->
+        <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
+
+        <!-- ====== HOME PAGE TAB ====== -->
+        <div class="tab-content active" id="tab-home">
+            <div class="page-header">
+                <h1><i class="fas fa-home" style="color:#c0392b"></i> Home Page</h1>
+                <p>Edit the homepage hero, feature cards, and support section.</p>
+                <div class="site-links">
+                    <a href="index.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+
+            <!-- Banner Slideshow -->
+            <div class="section-card">
+                <h2><i class="fas fa-images"></i> Banner Slideshow</h2>
+                <div class="status-note"><i class="fas fa-info-circle"></i> Upload multiple banner images to create an auto-scrolling slideshow on the homepage. Recommended: 1920×600px or wider.</div>
+
+                <div class="gallery-add-box">
+                    <h3><i class="fas fa-upload"></i> Upload Banner Images</h3>
+                    <div class="gallery-add-inputs">
+                        <div class="form-row" style="flex:1;min-width:200px">
+                            <label>Select Images <span style="font-weight:400;color:#888">(hold Ctrl/Cmd for multiple)</span></label>
+                            <input type="file" accept="image/*" id="banner-new-file" multiple onchange="updateBannerCount(this)">
+                            <small id="banner-count-label" style="color:#27ae60;font-weight:600"></small>
+                        </div>
+                        <button class="add-btn" onclick="addBannerImages()"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                </div>
+
+                <div id="banner-admin-grid" class="gallery-admin-grid" style="margin-top:16px">
+                    <div class="gallery-no-items">No custom banners — default banner in use.</div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="save-btn" onclick="saveBanners()"><i class="fas fa-save"></i> Save Banners</button>
+                    <button class="secondary-btn" onclick="resetBanners()"><i class="fas fa-undo"></i> Reset to Default</button>
+                </div>
+            </div>
+
+            <!-- Hero Text -->
+            <div class="section-card">
+                <h2><i class="fas fa-heading"></i> Hero Text</h2>
+                <div class="form-row">
+                    <label>Hero Title</label>
+                    <input type="text" id="f-hero-title" placeholder="e.g. Upholding Legal Rights &amp; Accountability">
+                </div>
+                <div class="form-row">
+                    <label>Hero Subtitle</label>
+                    <textarea id="f-hero-subtitle" rows="2" placeholder="e.g. For a Transparent & Lawful India"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('home-hero')"><i class="fas fa-save"></i> Save Hero Text</button>
+            </div>
+
+            <!-- Feature Cards -->
+            <div class="section-card">
+                <h2><i class="fas fa-th-large"></i> Feature Highlight Cards</h2>
+                <div id="feature-cards-container">
+                    <!-- dynamically rendered -->
+                </div>
+                <button class="save-btn" onclick="saveSection('home-features')"><i class="fas fa-save"></i> Save Feature Cards</button>
+            </div>
+
+            <!-- Support Boxes -->
+            <div class="section-card">
+                <h2><i class="fas fa-hand-holding-heart"></i> Support Mission Boxes</h2>
+                <div id="support-boxes-container"></div>
+                <button class="save-btn" onclick="saveSection('home-support')"><i class="fas fa-save"></i> Save Support Boxes</button>
+            </div>
+        </div>
+
+        <!-- ====== ABOUT TAB ====== -->
+        <div class="tab-content" id="tab-about">
+            <div class="page-header">
+                <h1><i class="fas fa-info-circle" style="color:#c0392b"></i> About Page</h1>
+                <p>Edit the About Us page content and logo.</p>
+                <div class="site-links">
+                    <a href="about.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2><i class="fas fa-image"></i> About Page Logo</h2>
+                <div class="img-upload-section">
+                    <div class="img-preview-box logo-box">
+                        <img id="about-logo-preview" src="Images/Logo.png" alt="About Logo">
+                    </div>
+                    <div class="img-upload-info">
+                        <label>Logo Image (About Page)</label>
+                        <input type="file" accept="image/*" onchange="handleImgUpload(event,'about_logo','about-logo-preview')">
+                        <small>Shown at the top of the About page. PNG with transparency recommended.</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>Founded Date</label>
+                    <input type="text" id="f-about-founded" placeholder="e.g. Founded on: January 1, 2020">
+                </div>
+                <div class="form-row">
+                    <label>Introduction Paragraph</label>
+                    <textarea id="f-about-intro" rows="4"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('about-top')"><i class="fas fa-save"></i> Save</button>
+            </div>
+
+            <div class="section-card">
+                <h2><i class="fas fa-bullseye"></i> Page Sections</h2>
+                <p style="color:#666;font-size:0.88rem;margin-bottom:16px;">Edit each section heading and paragraph.</p>
+                <div id="about-sections-container"></div>
+                <button class="save-btn" onclick="saveSection('about-sections')" style="background:#555;"><i class="fas fa-save"></i> Save All Sections at Once</button>
+            </div>
+        </div>
+
+        <!-- ====== OUR WORK TAB ====== -->
+        <div class="tab-content" id="tab-work">
+            <div class="page-header">
+                <h1><i class="fas fa-gavel" style="color:#c0392b"></i> Our Work</h1>
+                <p>Edit work areas, card content, and the impact section.</p>
+                <div class="site-links">
+                    <a href="work.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-align-left"></i> Page Introduction</h2>
+                <div class="form-row">
+                    <label>Intro Paragraph</label>
+                    <textarea id="f-work-intro" rows="4"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('work-intro')"><i class="fas fa-save"></i> Save</button>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-th-large"></i> Work Area Cards</h2>
+                <div id="work-cards-container"></div>
+                <button class="save-btn" onclick="saveSection('work-cards')"><i class="fas fa-save"></i> Save Work Cards</button>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-chart-bar"></i> Our Impact Section</h2>
+                <div class="form-row">
+                    <label>Impact Heading</label>
+                    <input type="text" id="f-work-impact-title" placeholder="e.g. Our Impact">
+                </div>
+                <div class="form-row">
+                    <label>Impact Description</label>
+                    <textarea id="f-work-impact-text" rows="4"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('work-impact')"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </div>
+
+        <!-- ====== GALLERY TAB ====== -->
+        <div class="tab-content" id="tab-gallery">
+            <div class="page-header">
+                <h1><i class="fas fa-images" style="color:#c0392b"></i> Gallery</h1>
+                <p>Upload, manage, and reorder gallery photos.</p>
+                <div class="site-links">
+                    <a href="gallery.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2><i class="fas fa-plus-circle"></i> Add New Photo</h2>
+                <div class="gallery-add-box">
+                    <h3><i class="fas fa-upload"></i> Upload Gallery Images</h3>
+                    <div class="gallery-add-inputs">
+                        <div class="form-row" style="flex:2;min-width:220px">
+                            <label>Select Images <span style="font-weight:400;color:#888">(hold Ctrl/Cmd to select multiple)</span></label>
+                            <input type="file" accept="image/*" id="gallery-new-file" multiple onchange="updateFileCount(this)">
+                            <small id="file-count-label" style="color:#27ae60;font-weight:600"></small>
+                        </div>
+                        <div class="form-row" style="min-width:180px">
+                            <label>Caption Prefix <span style="font-weight:400;color:#888">(optional)</span></label>
+                            <input type="text" id="gallery-new-caption" placeholder="e.g. Legal Workshop">
+                            <small>Multiple files → "Legal Workshop 1", "Legal Workshop 2"…</small>
+                        </div>
+                        <button class="add-btn" onclick="addGalleryItems()"><i class="fas fa-plus"></i> Add to Gallery</button>
+                    </div>
+                </div>
+                <div class="warning-note"><i class="fas fa-info-circle"></i> After adding all images, click <strong>Save Gallery</strong> below to publish changes.</div>
+            </div>
+
+            <div class="section-card">
+                <h2><i class="fas fa-grip-horizontal"></i> Current Gallery Items</h2>
+                <div id="gallery-admin-grid" class="gallery-admin-grid">
+                    <div class="gallery-no-items">Loading gallery...</div>
+                </div>
+                <div class="btn-row">
+                    <button class="save-btn" onclick="saveGallery()"><i class="fas fa-save"></i> Save Gallery</button>
+                    <button class="secondary-btn" onclick="resetGallery()"><i class="fas fa-undo"></i> Reset to Defaults</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== GET INVOLVED TAB ====== -->
+        <div class="tab-content" id="tab-getinvolved">
+            <div class="page-header">
+                <h1><i class="fas fa-hands-helping" style="color:#c0392b"></i> Get Involved</h1>
+                <p>Edit the get involved cards content.</p>
+                <div class="site-links">
+                    <a href="get-involved.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-th-large"></i> Involvement Cards</h2>
+                <div id="gi-cards-container"></div>
+                <button class="save-btn" onclick="saveSection('gi-cards')"><i class="fas fa-save"></i> Save Cards</button>
+            </div>
+        </div>
+
+        <!-- ====== RESOURCES TAB ====== -->
+        <div class="tab-content" id="tab-resources">
+            <div class="page-header">
+                <h1><i class="fas fa-book-open" style="color:#c0392b"></i> Resources</h1>
+                <p>Edit the News Corner and Knowledge Bank content.</p>
+                <div class="site-links">
+                    <a href="resources.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-newspaper"></i> News Corner</h2>
+                <div class="form-row">
+                    <label>Title</label>
+                    <input type="text" id="f-res-news-title" placeholder="News Corner">
+                </div>
+                <div class="form-row">
+                    <label>Content</label>
+                    <textarea id="f-res-news-text" rows="4"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('res-news')"><i class="fas fa-save"></i> Save</button>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-database"></i> Knowledge Bank Cards</h2>
+                <div id="res-kb-container"></div>
+                <button class="save-btn" onclick="saveSection('res-kb')"><i class="fas fa-save"></i> Save Knowledge Bank</button>
+            </div>
+        </div>
+
+        <!-- ====== CONTACT TAB ====== -->
+        <div class="tab-content" id="tab-contact">
+            <div class="page-header">
+                <h1><i class="fas fa-envelope" style="color:#c0392b"></i> Contact Page</h1>
+                <p>Edit contact page text. Email changes apply across all pages.</p>
+                <div class="site-links">
+                    <a href="contact.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-align-left"></i> Contact Content</h2>
+                <div class="form-row">
+                    <label>Intro Paragraph</label>
+                    <textarea id="f-contact-intro" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <label>Contact Details Intro</label>
+                    <textarea id="f-contact-details-intro" rows="2"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('contact-content')"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </div>
+
+        <!-- ====== GRIEVANCE TAB ====== -->
+        <div class="tab-content" id="tab-grievance">
+            <div class="page-header">
+                <h1><i class="fas fa-exclamation-circle" style="color:#c0392b"></i> Grievance Page</h1>
+                <p>Edit the grievance form intro text.</p>
+                <div class="site-links">
+                    <a href="grievance.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Page</a>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2><i class="fas fa-align-left"></i> Intro Text</h2>
+                <div class="form-row">
+                    <label>Intro Paragraph</label>
+                    <textarea id="f-grievance-intro" rows="4"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('grievance-intro')"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </div>
+
+        <!-- ====== SETTINGS TAB ====== -->
+        <div class="tab-content" id="tab-settings">
+            <div class="page-header">
+                <h1><i class="fas fa-cog" style="color:#c0392b"></i> Site Settings</h1>
+                <p>Global settings that apply across all pages.</p>
+            </div>
+
+            <!-- Logo -->
+            <div class="section-card">
+                <h2><i class="fas fa-image"></i> Site Logo</h2>
+                <div class="img-upload-section">
+                    <div class="img-preview-box logo-box">
+                        <img id="logo-preview" src="Images/Logo.png" alt="Logo Preview">
+                    </div>
+                    <div class="img-upload-info">
+                        <label>Logo Image (used in all page headers)</label>
+                        <input type="file" accept="image/*" id="logo-file" onchange="handleImgUpload(event,'logo','logo-preview')">
+                        <small>PNG with transparent background recommended. Shown at ~50px height.</small>
+                    </div>
+                </div>
+                <div class="status-note"><i class="fas fa-check-circle"></i> Logo uploads are saved instantly and apply to all pages on next visit.</div>
+            </div>
+
+            <!-- Email -->
+            <div class="section-card">
+                <h2><i class="fas fa-envelope"></i> Contact Email</h2>
+                <div class="form-row">
+                    <label>Email Address (appears in footer &amp; contact page)</label>
+                    <input type="email" id="f-email" placeholder="contact.lrpf@gmail.com">
+                </div>
+                <button class="save-btn" onclick="saveSection('settings-email')"><i class="fas fa-save"></i> Save Email</button>
+            </div>
+
+            <!-- Social Links -->
+            <div class="section-card">
+                <h2><i class="fas fa-share-alt"></i> Social Media Links</h2>
+                <div class="grid-2">
+                    <div class="form-row">
+                        <label><i class="fa-brands fa-x-twitter"></i> X (Twitter) URL</label>
+                        <input type="url" id="f-social-twitter" placeholder="https://x.com/lawinforce">
+                    </div>
+                    <div class="form-row">
+                        <label><i class="fa-brands fa-facebook-f"></i> Facebook URL</label>
+                        <input type="url" id="f-social-facebook" placeholder="https://www.facebook.com/lawinforce.org">
+                    </div>
+                    <div class="form-row">
+                        <label><i class="fa-brands fa-threads"></i> Threads URL</label>
+                        <input type="url" id="f-social-threads" placeholder="https://www.threads.net/@lawinforce">
+                    </div>
+                    <div class="form-row">
+                        <label><i class="fa-brands fa-youtube"></i> YouTube URL</label>
+                        <input type="url" id="f-social-youtube" placeholder="https://www.youtube.com/@legalrightsprotectionforum3549">
+                    </div>
+                </div>
+                <button class="save-btn" onclick="saveSection('settings-social')"><i class="fas fa-save"></i> Save Social Links</button>
+            </div>
+
+            <!-- Password -->
+            <div class="section-card">
+                <h2><i class="fas fa-lock"></i> Change Admin Password</h2>
+                <div class="grid-3">
+                    <div class="form-row">
+                        <label>Current Password</label>
+                        <input type="password" id="f-pwd-current" placeholder="Current password">
+                    </div>
+                    <div class="form-row">
+                        <label>New Password</label>
+                        <input type="password" id="f-pwd-new" placeholder="New password">
+                    </div>
+                    <div class="form-row">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="f-pwd-confirm" placeholder="Confirm new password">
+                    </div>
+                </div>
+                <button class="save-btn" onclick="changePassword()"><i class="fas fa-key"></i> Change Password</button>
+            </div>
+
+            <!-- Reset -->
+            <div class="section-card">
+                <h2><i class="fas fa-undo"></i> Reset All Content</h2>
+                <div class="danger-note"><i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> This will remove all custom content and restore the original site defaults. This action cannot be undone.</div>
+                <button class="danger-btn" onclick="resetAll()"><i class="fas fa-trash-alt"></i> Reset All Site Content</button>
+            </div>
+        </div>
+
+    </main><!-- end .main-content -->
+</div><!-- end #admin-panel -->
+
+<script>
+/* ============================================================
+   ADMIN PANEL JAVASCRIPT
+   ============================================================ */
+const P = 'lrpf_';
+const DEFAULT_PASSWORD = 'lrpf@2026';
+
+/* --- Storage helpers --- */
+function g(key) { return localStorage.getItem(P + key); }
+function s(key, val) { localStorage.setItem(P + key, val); }
+function rm(key) { localStorage.removeItem(P + key); }
+
+/* --- Default content (exact match to HTML pages) --- */
+const DEFAULTS = {
+    // Home
+    'hero-title': 'Upholding Legal Rights & Accountability',
+    'hero-subtitle': 'For a Transparent & Lawful India\nAdvocacy | Legal Action | Research | Awareness',
+    'feat-1-title': 'Legal Advocacy & Action',
+    'feat-1-text': 'Fighting for Justice & Constitutional Rights.',
+    'feat-2-title': 'Research & Documentation',
+    'feat-2-text': 'Investigating & Reporting on Unlawful Activities.',
+    'feat-3-title': 'Legal Awareness Camps',
+    'feat-3-text': 'Empowering Citizens with Legal Knowledge.',
+    'feat-4-title': 'Whistleblower Platform',
+    'feat-4-text': 'Confidential Reporting for Corruption & Security Issues.',
+    'support-1-title': 'Make a Financial Contribution',
+    'support-1-text': 'Fund Our Legal Efforts',
+    'support-2-title': 'Become a Whistleblower',
+    'support-2-text': 'Report Corruption Safely',
+    'support-3-title': 'Partner with Us',
+    'support-3-text': 'Collaborate for Change',
+    // About
+    'about-founded': 'Founded on: January 1, 2020',
+    'about-intro': 'The Legal Rights Protection Forum is a non-profit organization dedicated to upholding India\'s constitutional framework, national security, and legal integrity. We are a team of passionate legal and social activists, lawyers, and researchers who operate on the frontlines of legal activism.',
+    'about-mission-title': 'Our Mission',
+    'about-mission-text': 'Our mission is to build a lawful, transparent, and secure India by holding organizations and individuals accountable for violations of national law. We believe in empowering citizens with the knowledge and tools they need to protect their rights and contribute to a more just and secure society.',
+    'about-work-title': 'Our Work',
+    'about-work-text': 'At the Legal Rights Protection Forum, our work is centered on addressing critical issues that affect India\'s legal, social, and national fabric. Our dedicated team of experts focuses on the following key areas to ensure accountability and uphold the rule of law.Through strategic legal action, public awareness campaigns, and investigative reporting, Legal Rights Protection Forum works to expose and prevent activities that threaten India\'s sovereignty and its citizens\' rights.',
+    'about-child-title': 'Child Rights',
+    'about-child-text': 'We are dedicated to the protection of children and their fundamental rights. Our efforts focus on combating issues such as child labor, trafficking, and abuse. We work to ensure that legal provisions designed to protect children are effectively enforced, and we advocate for policies that create a safer environment for them to grow and thrive.',
+    'about-human-title': 'Human Rights',
+    'about-human-text': 'Legal Rights Protection Forum is committed to upholding the basic human rights guaranteed to every individual under the Constitution of India and international law. We take action against violations of human rights, including discrimination, unlawful detention, and social injustice. Our work involves legal intervention and public advocacy to ensure that justice is served and that the dignity of every citizen is respected.',
+    'about-fcra-title': 'Financial Accountability and FCRA Compliance',
+    'about-fcra-text': 'We are committed to ensuring financial transparency, especially concerning foreign funding. We actively investigate and file formal complaints with government authorities regarding the misuse of foreign funds. Our work targets violations of the Foreign Contribution (Regulation) Act (FCRA), a crucial law that regulates the acceptance and utilization of foreign contributions by individuals and associations in India. By monitoring compliance and reporting violations, we help prevent these funds from being used for purposes that are detrimental to India\'s interests.',
+    'about-natsec-title': 'Protecting National Security',
+    'about-natsec-text': 'National security is a cornerstone of our work. We closely monitor suspicious activities that are backed by foreign entities and have the potential to destabilize the nation. By highlighting these threats to the appropriate authorities and the public, we aim to prevent actions that could compromise India\'s sovereignty and internal security. Our focus is on proactive intervention to counter foreign-backed agendas that pose a risk to the country.',
+    'about-encroach-title': 'Addressing Illegal Encroachments',
+    'about-encroach-text': 'The unlawful seizure and occupation of public land and unauthorized construction projects are a significant challenge. These illegal encroachments often lead to a loss of public resources and can disrupt urban planning and environmental balance. We work to expose these activities and advocate for legal action to reclaim public property and restore order. Our efforts help ensure that public spaces are protected for the benefit of all citizens.',
+    'about-citizen-title': 'Empowering Citizens Through Legal Activism',
+    'about-citizen-text': 'A well-informed citizenry is the most effective defense against legal and social injustices. We believe in empowering people with knowledge about their rights and the laws of the land. Our team conducts a variety of educational initiatives, including training camps and workshops on legal activism, awareness drives, and training programs. These programs are designed to help citizens understand their constitutional rights and national laws, enabling them to identify illegal activities and take informed action.',
+    'about-digital-title': 'Leveraging Social and Digital Activism',
+    'about-digital-text': 'In today\'s connected world, digital platforms are powerful tools for change. We use social media and targeted digital campaigns to raise awareness about our mission and the issues we fight for. By engaging the public online, we can mobilize support, share our findings, and create a powerful collective voice against legal and social injustices. This approach helps us reach a broader audience and build a community dedicated to upholding the rule of law.',
+    // Work
+    'work-intro': 'At the Legal Rights Protection Forum, our work is centered on addressing critical issues that affect India\'s legal, social, and national fabric. Our dedicated team of experts focuses on the following key areas to ensure accountability and uphold the rule of law.Through strategic legal action, public awareness campaigns, and investigative reporting, Legal Rights Protection Forum works to expose and prevent activities that threaten India\'s sovereignty and its citizens\' rights.',
+    'work-1-title': 'Child Rights',
+    'work-1-text': 'We are dedicated to the protection of children and their fundamental rights. Our efforts focus on combating issues such as child labor, trafficking, and abuse. We work to ensure that legal provisions designed to protect children are effectively enforced, and we advocate for policies that create a safer environment for them to grow and thrive.',
+    'work-2-title': 'Human Rights',
+    'work-2-text': 'Legal Rights Protection Forum is committed to upholding the basic human rights guaranteed to every individual under the Constitution of India and international law. We take action against violations of human rights, including discrimination, unlawful detention, and social injustice. Our work involves legal intervention and public advocacy to ensure that justice is served and that the dignity of every citizen is respected.',
+    'work-3-title': 'Financial Accountability & FCRA',
+    'work-3-text': 'We are committed to ensuring financial transparency, especially concerning foreign funding. We actively investigate and file formal complaints with government authorities regarding the misuse of foreign funds. Our work targets violations of the Foreign Contribution (Regulation) Act (FCRA), a crucial law that regulates the acceptance and utilization of foreign contributions by individuals and associations in India. By monitoring compliance and reporting violations, we help prevent these funds from being used for purposes that are detrimental to India\'s interests.',
+    'work-4-title': 'National Security',
+    'work-4-text': 'National security is a cornerstone of our work. We closely monitor suspicious activities that are backed by foreign entities and have the potential to destabilize the nation. By highlighting these threats to the appropriate authorities and the public, we aim to prevent actions that could compromise India\'s sovereignty and internal security. Our focus is on proactive intervention to counter foreign-backed agendas that pose a risk to the country.',
+    'work-5-title': 'Illegal Encroachments',
+    'work-5-text': 'The unlawful seizure and occupation of public land and unauthorized construction projects are a significant challenge. These illegal encroachments often lead to a loss of public resources and can disrupt urban planning and environmental balance. We work to expose these activities and advocate for legal action to reclaim public property and restore order. Our efforts help ensure that public spaces are protected for the benefit of all citizens.',
+    'work-6-title': 'Empowering Citizens',
+    'work-6-text': 'A well-informed citizenry is the most effective defense against legal and social injustices. We believe in empowering people with knowledge about their rights and the laws of the land. Our team conducts a variety of educational initiatives, including training camps and workshops on legal activism, awareness drives, and training programs. These programs are designed to help citizens understand their constitutional rights and national laws, enabling them to identify illegal activities and take informed action.',
+    'work-7-title': 'Social & Digital Activism',
+    'work-7-text': 'In today\'s connected world, digital platforms are powerful tools for change. We use social media and targeted digital campaigns to raise awareness about our mission and the issues we fight for. By engaging the public online, we can mobilize support, share our findings, and create a powerful collective voice against legal and social injustices. This approach helps us reach a broader audience and build a community dedicated to upholding the rule of law.',
+    'work-impact-title': 'Our Impact',
+    'work-impact-text': 'Legal Rights Protection Forum\'s actions have created tangible change, from the suspension of NGOs misusing foreign funds to highlighting illegal encroachments. Explore our real-life impact stories that showcase how we are working to protect India\'s legal and social fabric.',
+    // Get Involved
+    'gi-1-title': '1. Sponsor a Legal Awareness & Training Camp',
+    'gi-1-intro': 'Support the expansion of our legal literacy and constitutional awareness programmes across India.',
+    'gi-1-full': 'Sponsoring a training camp enables citizens to understand their legal rights, recognize unlawful practices, and take informed, lawful action against violations. These camps focus on constitutional safeguards, statutory compliance, and citizen responsibilities.',
+    'gi-2-title': '2. Make a Financial Contribution (Classified by Purpose)',
+    'gi-2-intro': 'Financial contributions to the Legal Rights Protection Forum directly strengthen our capacity to operate independently and effectively.',
+    'gi-2-full': 'Contributions may be made under the following classified activity heads: Legal Action & Litigation Support, Research & Documentation, Legal Awareness & Citizen Empowerment, Operational & Compliance Costs. Every contribution—large or small—strengthens the rule of law and advances accountability.',
+    'gi-3-title': '3. Become a Whistleblower',
+    'gi-3-intro': 'If you possess credible information relating to corruption, misuse of foreign contributions, financial irregularities, or activities that may threaten India\'s constitutional, legal, or national security framework, we provide a secure and confidential platform for responsible disclosure.',
+    'gi-3-full': 'Whistleblower identities are protected to the fullest extent permitted by law.',
+    'gi-4-title': '4. Partner with Us',
+    'gi-4-intro': 'We welcome collaboration with individuals, legal professionals, researchers, civil society organisations, and institutions that share our commitment to constitutional values, transparency, and accountability.',
+    'gi-4-full': 'Partnerships may include knowledge-sharing, joint research, training initiatives, or institutional support.',
+    // Resources
+    'res-news-title': 'News Corner',
+    'res-news-text': 'Our work has garnered national attention. From preventing foreign preachers with extremist views from entering India to exposing large-scale FCRA violations and forced conversion networks, our interventions are regularly featured in the media. Stay updated on our latest coverage.',
+    'res-kb-1-title': 'Important Judgments',
+    'res-kb-1-text': 'A collection of key court rulings relevant to FCRA, national security, religious freedom, and governance.',
+    'res-kb-2-title': 'Government Orders (GOs)',
+    'res-kb-2-text': 'Important government orders from Andhra Pradesh and Telangana, documented for reference and analysis.',
+    'res-kb-3-title': 'Important Laws',
+    'res-kb-3-text': 'Simplified references to vital legislation that guides our work, including the FCRA and the Constitution.',
+    'res-kb-4-title': 'Miscellaneous',
+    'res-kb-4-text': 'Research notes, policy briefs, and other reference materials for legal activism.',
+    // Contact
+    'contact-intro': 'We\'d love to hear from you. Reach out with any questions or to learn more about our work.',
+    'contact-details-intro': 'For inquiries, support, or partnership opportunities, please use the details below.',
+    // Grievance
+    'grievance-intro': 'If you possess credible information relating to corruption, misuse of foreign contributions, or activities that threaten India\'s security, please report it below. Your identity will be protected.',
+    // Settings
+    'email': 'contact.lrpf@gmail.com',
+    'social_twitter': 'https://x.com/lawinforce',
+    'social_facebook': 'https://www.facebook.com/lawinforce.org',
+    'social_threads': 'https://www.threads.net/@lawinforce',
+    'social_youtube': 'https://www.youtube.com/@legalrightsprotectionforum3549'
+};
+
+const DEFAULT_GALLERY = [
+    {src:'https://via.placeholder.com/400x300?text=Legal+Workshop', caption:'Legal Awareness Workshop'},
+    {src:'https://via.placeholder.com/400x300?text=Public+Rally', caption:'Public Rally for Rights'},
+    {src:'https://via.placeholder.com/400x300?text=Training+Camp', caption:'Citizen Training Camp'},
+    {src:'https://via.placeholder.com/400x300?text=Press+Conference', caption:'Press Conference on FCRA'},
+    {src:'https://via.placeholder.com/400x300?text=Community+Meet', caption:'Community Engagement'},
+    {src:'https://via.placeholder.com/400x300?text=Field+Investigation', caption:'Field Investigation Team'}
+];
+
+let galleryItems = [];
+
+/* ===================== LOGIN ===================== */
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const pwd = document.getElementById('pwd-input').value;
+    const storedPwd = g('admin_pwd') || DEFAULT_PASSWORD;
+    if (pwd === storedPwd) {
+        s('admin_session', '1');
+        showPanel();
+    } else {
+        document.getElementById('login-error').textContent = 'Incorrect password. Try again.';
+    }
+});
+
+document.getElementById('logout-btn').addEventListener('click', function() {
+    rm('admin_session');
+    location.reload();
+});
+
+function showPanel() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    buildDynamicSections();
+    loadAllFields();
+    loadGallery();
+}
+
+/* Auto-login if session exists */
+if (g('admin_session') === '1') showPanel();
+
+/* ===================== TABS ===================== */
+document.querySelectorAll('.nav-item[data-tab]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var tab = this.getAttribute('data-tab');
+        document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+        document.getElementById('tab-' + tab).classList.add('active');
+        this.classList.add('active');
+    });
+});
+
+/* ===================== BUILD DYNAMIC SECTIONS ===================== */
+function buildDynamicSections() {
+    // Feature cards (4)
+    var fcHtml = '';
+    for (var i = 1; i <= 4; i++) {
+        fcHtml += '<div class="card-group"><div class="card-group-label">Feature Card ' + i + '</div>' +
+            '<div class="grid-2">' +
+            '<div class="form-row"><label>Title</label><input type="text" id="f-feat-' + i + '-title" placeholder="Card title"></div>' +
+            '<div class="form-row"><label>Text</label><input type="text" id="f-feat-' + i + '-text" placeholder="Card description"></div>' +
+            '</div></div>';
+    }
+    document.getElementById('feature-cards-container').innerHTML = fcHtml;
+
+    // Support boxes (3)
+    var sbHtml = '';
+    for (var j = 1; j <= 3; j++) {
+        sbHtml += '<div class="card-group"><div class="card-group-label">Support Box ' + j + '</div>' +
+            '<div class="grid-2">' +
+            '<div class="form-row"><label>Title</label><input type="text" id="f-support-' + j + '-title"></div>' +
+            '<div class="form-row"><label>Subtitle</label><input type="text" id="f-support-' + j + '-text"></div>' +
+            '</div></div>';
+    }
+    document.getElementById('support-boxes-container').innerHTML = sbHtml;
+
+    // About sections
+    var aboutSections = [
+        ['mission', 'Our Mission'],
+        ['work',    'Our Work'],
+        ['child',   'Child Rights'],
+        ['human',   'Human Rights'],
+        ['fcra',    'Financial Accountability & FCRA'],
+        ['natsec',  'National Security'],
+        ['encroach','Illegal Encroachments'],
+        ['citizen', 'Empowering Citizens'],
+        ['digital', 'Social & Digital Activism']
+    ];
+    var asHtml = '';
+    aboutSections.forEach(function(sec) {
+        asHtml += '<div class="card-group"><div class="card-group-label">' + sec[1] + '</div>' +
+            '<div class="form-row"><label>Heading</label><input type="text" id="f-about-' + sec[0] + '-title"></div>' +
+            '<div class="form-row"><label>Content</label><textarea id="f-about-' + sec[0] + '-text" rows="3"></textarea></div>' +
+            '<button class="save-btn" style="margin-top:8px;" onclick="saveAboutSection(\'' + sec[0] + '\')"><i class="fas fa-save"></i> Save</button>' +
+            '</div>';
+    });
+    document.getElementById('about-sections-container').innerHTML = asHtml;
+
+    // Work cards (7)
+    var workNames = ['Child Rights','Human Rights','Financial Accountability & FCRA','National Security','Illegal Encroachments','Empowering Citizens','Social & Digital Activism'];
+    var wcHtml = '';
+    for (var k = 1; k <= 7; k++) {
+        wcHtml += '<div class="card-group"><div class="card-group-label">Card ' + k + ': ' + workNames[k-1] + '</div>' +
+            '<div class="form-row"><label>Title</label><input type="text" id="f-work-' + k + '-title"></div>' +
+            '<div class="form-row"><label>Content (full text shown on expand)</label><textarea id="f-work-' + k + '-text" rows="3"></textarea></div>' +
+            '</div>';
+    }
+    document.getElementById('work-cards-container').innerHTML = wcHtml;
+
+    // Get Involved cards (4)
+    var giHtml = '';
+    for (var m = 1; m <= 4; m++) {
+        giHtml += '<div class="card-group"><div class="card-group-label">Card ' + m + '</div>' +
+            '<div class="form-row"><label>Title</label><input type="text" id="f-gi-' + m + '-title"></div>' +
+            '<div class="form-row"><label>Intro Text</label><textarea id="f-gi-' + m + '-intro" rows="2"></textarea></div>' +
+            '<div class="form-row"><label>Full Content (shown on expand)</label><textarea id="f-gi-' + m + '-full" rows="3"></textarea></div>' +
+            '</div>';
+    }
+    document.getElementById('gi-cards-container').innerHTML = giHtml;
+
+    // Resources KB cards (4)
+    var kbHtml = '';
+    for (var n = 1; n <= 4; n++) {
+        kbHtml += '<div class="card-group"><div class="card-group-label">Knowledge Bank Card ' + n + '</div>' +
+            '<div class="form-row"><label>Title</label><input type="text" id="f-res-kb-' + n + '-title"></div>' +
+            '<div class="form-row"><label>Content</label><textarea id="f-res-kb-' + n + '-text" rows="2"></textarea></div>' +
+            '</div>';
+    }
+    document.getElementById('res-kb-container').innerHTML = kbHtml;
+}
+
+/* ===================== LOAD ALL FIELDS ===================== */
+function loadAllFields() {
+    // Helper: set field value from localStorage or default
+    function fill(fieldId, key) {
+        var el = document.getElementById('f-' + fieldId);
+        if (!el) return;
+        el.value = g(key) !== null ? g(key) : (DEFAULTS[key] || '');
+    }
+
+    // Home
+    fill('hero-title',    'hero-title');
+    fill('hero-subtitle', 'hero-subtitle');
+    for (var i = 1; i <= 4; i++) {
+        fill('feat-' + i + '-title', 'feat-' + i + '-title');
+        fill('feat-' + i + '-text',  'feat-' + i + '-text');
+    }
+    for (var j = 1; j <= 3; j++) {
+        fill('support-' + j + '-title', 'support-' + j + '-title');
+        fill('support-' + j + '-text',  'support-' + j + '-text');
+    }
+
+    // About
+    fill('about-founded', 'about-founded');
+    fill('about-intro',   'about-intro');
+    ['mission','work','child','human','fcra','natsec','encroach','citizen','digital'].forEach(function(sec) {
+        fill('about-' + sec + '-title', 'about-' + sec + '-title');
+        fill('about-' + sec + '-text',  'about-' + sec + '-text');
+    });
+
+    // About logo preview
+    var aboutLogo = g('about_logo');
+    if (aboutLogo) document.getElementById('about-logo-preview').src = aboutLogo;
+
+    // Work
+    fill('work-intro',        'work-intro');
+    fill('work-impact-title', 'work-impact-title');
+    fill('work-impact-text',  'work-impact-text');
+    for (var k = 1; k <= 7; k++) {
+        fill('work-' + k + '-title', 'work-' + k + '-title');
+        fill('work-' + k + '-text',  'work-' + k + '-text');
+    }
+
+    // Get Involved
+    for (var m = 1; m <= 4; m++) {
+        fill('gi-' + m + '-title', 'gi-' + m + '-title');
+        fill('gi-' + m + '-intro', 'gi-' + m + '-intro');
+        fill('gi-' + m + '-full',  'gi-' + m + '-full');
+    }
+
+    // Resources
+    fill('res-news-title', 'res-news-title');
+    fill('res-news-text',  'res-news-text');
+    for (var n = 1; n <= 4; n++) {
+        fill('res-kb-' + n + '-title', 'res-kb-' + n + '-title');
+        fill('res-kb-' + n + '-text',  'res-kb-' + n + '-text');
+    }
+
+    // Contact
+    fill('contact-intro',         'contact-intro');
+    fill('contact-details-intro', 'contact-details-intro');
+
+    // Grievance
+    fill('grievance-intro', 'grievance-intro');
+
+    // Settings
+    fill('email',          'email');
+    fill('social-twitter', 'social_twitter');
+    fill('social-facebook','social_facebook');
+    fill('social-threads', 'social_threads');
+    fill('social-youtube', 'social_youtube');
+
+    // Logo preview
+    var logo = g('logo');
+    if (logo) {
+        document.getElementById('logo-preview').src = logo;
+        document.getElementById('sidebar-logo').src = logo;
+    }
+
+    // Load banner slideshow
+    loadBanners();
+}
+
+/* ===================== SAVE SECTIONS ===================== */
+function saveSection(section) {
+    function sv(fieldId, key) {
+        var el = document.getElementById('f-' + fieldId);
+        if (el) s(key, el.value);
+    }
+
+    if (section === 'home-hero') {
+        sv('hero-title',    'hero-title');
+        sv('hero-subtitle', 'hero-subtitle');
+    }
+    else if (section === 'home-features') {
+        for (var i = 1; i <= 4; i++) {
+            sv('feat-' + i + '-title', 'feat-' + i + '-title');
+            sv('feat-' + i + '-text',  'feat-' + i + '-text');
+        }
+    }
+    else if (section === 'home-support') {
+        for (var j = 1; j <= 3; j++) {
+            sv('support-' + j + '-title', 'support-' + j + '-title');
+            sv('support-' + j + '-text',  'support-' + j + '-text');
+        }
+    }
+    else if (section === 'about-top') {
+        sv('about-founded', 'about-founded');
+        sv('about-intro',   'about-intro');
+    }
+    else if (section === 'about-sections') {
+        ['mission','work','child','human','fcra','natsec','encroach','citizen','digital'].forEach(function(sec) {
+            sv('about-' + sec + '-title', 'about-' + sec + '-title');
+            sv('about-' + sec + '-text',  'about-' + sec + '-text');
+        });
+    }
+    else if (section === 'work-intro') {
+        sv('work-intro', 'work-intro');
+    }
+    else if (section === 'work-cards') {
+        for (var k = 1; k <= 7; k++) {
+            sv('work-' + k + '-title', 'work-' + k + '-title');
+            sv('work-' + k + '-text',  'work-' + k + '-text');
+        }
+    }
+    else if (section === 'work-impact') {
+        sv('work-impact-title', 'work-impact-title');
+        sv('work-impact-text',  'work-impact-text');
+    }
+    else if (section === 'gi-cards') {
+        for (var m = 1; m <= 4; m++) {
+            sv('gi-' + m + '-title', 'gi-' + m + '-title');
+            sv('gi-' + m + '-intro', 'gi-' + m + '-intro');
+            sv('gi-' + m + '-full',  'gi-' + m + '-full');
+        }
+    }
+    else if (section === 'res-news') {
+        sv('res-news-title', 'res-news-title');
+        sv('res-news-text',  'res-news-text');
+    }
+    else if (section === 'res-kb') {
+        for (var n = 1; n <= 4; n++) {
+            sv('res-kb-' + n + '-title', 'res-kb-' + n + '-title');
+            sv('res-kb-' + n + '-text',  'res-kb-' + n + '-text');
+        }
+    }
+    else if (section === 'contact-content') {
+        sv('contact-intro',         'contact-intro');
+        sv('contact-details-intro', 'contact-details-intro');
+    }
+    else if (section === 'grievance-intro') {
+        sv('grievance-intro', 'grievance-intro');
+    }
+    else if (section === 'settings-email') {
+        sv('email', 'email');
+    }
+    else if (section === 'settings-social') {
+        sv('social-twitter',  'social_twitter');
+        sv('social-facebook', 'social_facebook');
+        sv('social-threads',  'social_threads');
+        sv('social-youtube',  'social_youtube');
+    }
+
+    showToast('Saved successfully!');
+}
+
+/* ===================== SAVE INDIVIDUAL ABOUT SECTION ===================== */
+function saveAboutSection(key) {
+    var titleEl = document.getElementById('f-about-' + key + '-title');
+    var textEl  = document.getElementById('f-about-' + key + '-text');
+    if (titleEl) s('about-' + key + '-title', titleEl.value);
+    if (textEl)  s('about-' + key + '-text',  textEl.value);
+    showToast('Saved!');
+}
+
+/* ===================== IMAGE UPLOAD ===================== */
+function handleImgUpload(event, key, previewId) {
+    var file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('Image too large (max 5MB). Please compress it first.', true);
+        event.target.value = '';
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var b64 = e.target.result;
+        try {
+            s(key, b64);
+            if (previewId) document.getElementById(previewId).src = b64;
+            if (key === 'logo') {
+                document.getElementById('sidebar-logo').src = b64;
+            }
+            showToast('Image uploaded & saved!');
+        } catch(err) {
+            showToast('Storage full! Try a smaller image.', true);
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+/* ===================== GALLERY ===================== */
+function loadGallery() {
+    var stored = g('gallery');
+    if (stored) {
+        try { galleryItems = JSON.parse(stored); } catch(e) { galleryItems = DEFAULT_GALLERY.slice(); }
+    } else {
+        galleryItems = DEFAULT_GALLERY.slice();
+    }
+    renderGalleryAdmin();
+}
+
+function renderGalleryAdmin() {
+    var grid = document.getElementById('gallery-admin-grid');
+    if (!galleryItems.length) {
+        grid.innerHTML = '<div class="gallery-no-items">No gallery items. Add some above.</div>';
+        return;
+    }
+    grid.innerHTML = galleryItems.map(function(item, idx) {
+        return '<div class="gallery-admin-item">' +
+            '<img class="item-img" src="' + escHtml(item.src) + '" alt="' + escHtml(item.caption) + '">' +
+            '<div class="gallery-admin-item-body">' +
+            '<input type="text" id="gcap-' + idx + '" value="' + escAttr(item.caption) + '" placeholder="Caption">' +
+            '<button class="remove-gallery-btn" onclick="removeGalleryItem(' + idx + ')"><i class="fas fa-trash-alt"></i> Remove</button>' +
+            '</div></div>';
+    }).join('');
+}
+
+function updateFileCount(input) {
+    var n = input.files.length;
+    var lbl = document.getElementById('file-count-label');
+    lbl.textContent = n > 0 ? n + ' file' + (n > 1 ? 's' : '') + ' selected' : '';
+}
+
+function addGalleryItems() {
+    var fileInput = document.getElementById('gallery-new-file');
+    var files = Array.from(fileInput.files);
+    var prefix = document.getElementById('gallery-new-caption').value.trim();
+
+    if (!files.length) { showToast('Please select at least one image file.', true); return; }
+
+    var oversized = files.filter(function(f) { return f.size > 4 * 1024 * 1024; });
+    if (oversized.length) {
+        showToast(oversized.length + ' file(s) exceed 4MB limit. Please use smaller images.', true);
+        return;
+    }
+
+    var total = files.length;
+    var done = 0;
+
+    files.forEach(function(file, idx) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            // Build caption: prefix + number if multiple, or filename if no prefix
+            var caption;
+            if (prefix) {
+                caption = total > 1 ? prefix + ' ' + (idx + 1) : prefix;
+            } else {
+                caption = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            }
+            galleryItems.push({ src: e.target.result, caption: caption });
+            done++;
+            if (done === total) {
+                renderGalleryAdmin();
+                document.getElementById('gallery-new-caption').value = '';
+                fileInput.value = '';
+                document.getElementById('file-count-label').textContent = '';
+                showToast(total + ' image' + (total > 1 ? 's' : '') + ' added! Click "Save Gallery" to publish.');
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Keep old name as alias for backward compat
+function addGalleryItem() { addGalleryItems(); }
+
+function removeGalleryItem(idx) {
+    if (!confirm('Remove this gallery image?')) return;
+    galleryItems.splice(idx, 1);
+    renderGalleryAdmin();
+    showToast('Image removed. Click "Save Gallery" to publish.');
+}
+
+function saveGallery() {
+    // Sync captions from inputs
+    galleryItems.forEach(function(item, idx) {
+        var cap = document.getElementById('gcap-' + idx);
+        if (cap) item.caption = cap.value;
+    });
+    try {
+        s('gallery', JSON.stringify(galleryItems));
+        showToast('Gallery saved!');
+    } catch(e) {
+        showToast('Storage full! Try removing some images or using smaller files.', true);
+    }
+}
+
+function resetGallery() {
+    if (!confirm('Reset gallery to default placeholder images?')) return;
+    galleryItems = DEFAULT_GALLERY.slice();
+    rm('gallery');
+    renderGalleryAdmin();
+    showToast('Gallery reset to defaults.');
+}
+
+/* ===================== PASSWORD CHANGE ===================== */
+function changePassword() {
+    var cur = document.getElementById('f-pwd-current').value;
+    var nw  = document.getElementById('f-pwd-new').value;
+    var cnf = document.getElementById('f-pwd-confirm').value;
+    var storedPwd = g('admin_pwd') || DEFAULT_PASSWORD;
+
+    if (cur !== storedPwd) { showToast('Current password is incorrect.', true); return; }
+    if (nw.length < 6)     { showToast('New password must be at least 6 characters.', true); return; }
+    if (nw !== cnf)        { showToast('New passwords do not match.', true); return; }
+
+    s('admin_pwd', nw);
+    document.getElementById('f-pwd-current').value = '';
+    document.getElementById('f-pwd-new').value = '';
+    document.getElementById('f-pwd-confirm').value = '';
+    showToast('Password changed successfully!');
+}
+
+/* ===================== RESET ALL ===================== */
+function resetAll() {
+    if (!confirm('Are you sure? This will remove ALL custom content and restore defaults. This cannot be undone.')) return;
+    var keysToRemove = Object.keys(DEFAULTS).concat([
+        'logo', 'about_logo', 'hero_bg', 'banners', 'gallery', 'admin_pwd'
+    ]);
+    keysToRemove.forEach(function(k) { rm(k); });
+    rm('admin_session');
+    showToast('All content reset. Reloading...');
+    setTimeout(function() { location.reload(); }, 1500);
+}
+
+/* ===================== BANNER SLIDESHOW ===================== */
+var bannerItems = [];
+
+function loadBanners() {
+    var stored = g('banners');
+    if (stored) {
+        try { bannerItems = JSON.parse(stored); } catch(e) { bannerItems = []; }
+    } else {
+        bannerItems = [];
+    }
+    renderBannerAdmin();
+}
+
+function renderBannerAdmin() {
+    var grid = document.getElementById('banner-admin-grid');
+    if (!grid) return;
+    if (!bannerItems.length) {
+        grid.innerHTML = '<div class="gallery-no-items">No custom banners — default banner in use.</div>';
+        return;
+    }
+    grid.innerHTML = bannerItems.map(function(item, idx) {
+        return '<div class="gallery-admin-item">' +
+            '<img class="item-img" src="' + escHtml(item.src) + '" alt="Banner ' + (idx + 1) + '">' +
+            '<div class="gallery-admin-item-body">' +
+            '<div style="text-align:center;padding:4px 0 6px;color:#666;font-size:0.82rem;font-weight:600">Slide ' + (idx + 1) + '</div>' +
+            '<button class="remove-gallery-btn" onclick="removeBannerItem(' + idx + ')"><i class="fas fa-trash-alt"></i> Remove</button>' +
+            '</div></div>';
+    }).join('');
+}
+
+function updateBannerCount(input) {
+    var n = input.files.length;
+    var lbl = document.getElementById('banner-count-label');
+    if (lbl) lbl.textContent = n > 0 ? n + ' file' + (n > 1 ? 's' : '') + ' selected' : '';
+}
+
+function addBannerImages() {
+    var fileInput = document.getElementById('banner-new-file');
+    var files = Array.from(fileInput.files);
+    if (!files.length) { showToast('Please select at least one image.', true); return; }
+    var oversized = files.filter(function(f) { return f.size > 4 * 1024 * 1024; });
+    if (oversized.length) { showToast(oversized.length + ' file(s) exceed 4MB limit.', true); return; }
+    var done = 0;
+    files.forEach(function(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            bannerItems.push({ src: e.target.result });
+            done++;
+            if (done === files.length) {
+                renderBannerAdmin();
+                fileInput.value = '';
+                document.getElementById('banner-count-label').textContent = '';
+                showToast(files.length + ' banner(s) added! Click "Save Banners" to publish.');
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeBannerItem(idx) {
+    if (!confirm('Remove this banner slide?')) return;
+    bannerItems.splice(idx, 1);
+    renderBannerAdmin();
+    showToast('Slide removed. Click "Save Banners" to publish.');
+}
+
+function saveBanners() {
+    try {
+        s('banners', JSON.stringify(bannerItems));
+        showToast('Banners saved! Homepage slideshow updated.');
+    } catch(e) {
+        showToast('Storage full! Try smaller images.', true);
+    }
+}
+
+function resetBanners() {
+    if (!confirm('Reset to the default single banner image?')) return;
+    bannerItems = [];
+    rm('banners');
+    renderBannerAdmin();
+    showToast('Banners reset to default.');
+}
+
+/* ===================== TOAST ===================== */
+function showToast(msg, isError) {
+    var toast = document.getElementById('toast');
+    var msgEl = document.getElementById('toast-msg');
+    msgEl.textContent = msg;
+    toast.classList.remove('error-toast');
+    if (isError) toast.classList.add('error-toast');
+    toast.classList.add('show');
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(function() { toast.classList.remove('show'); }, 3500);
+}
+
+/* ===================== HELPERS ===================== */
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(str) {
+    return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>

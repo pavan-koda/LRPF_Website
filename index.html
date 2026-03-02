@@ -45,13 +45,19 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Hero Section (auto-scrolling carousel) -->
+    <section class="hero" id="hero-section">
+        <div class="hero-slides" id="hero-slides">
+            <div class="hero-slide" style="background-image: url('Images/Banner1.png')"></div>
+        </div>
         <div class="hero-overlay"></div>
+        <button class="hero-nav hero-prev" id="hero-prev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+        <button class="hero-nav hero-next" id="hero-next" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+        <div class="hero-dots" id="hero-dots"></div>
         <div class="container hero-inner">
             <div class="hero-content">
-                <h1>Upholding Legal Rights & Accountability</h1>
-                <p class="lead">For a Transparent & Lawful India<br>Advocacy | Legal Action | Research | Awareness</p>
+                <h1 data-key="hero-title">Upholding Legal Rights & Accountability</h1>
+                <p class="lead" data-key="hero-subtitle">For a Transparent & Lawful India<br>Advocacy | Legal Action | Research | Awareness</p>
                 <div class="hero-cta">
                     <a href="about.html" class="btn">LEARN MORE</a>
                     <a href="get-involved.html" class="btn btn-outline">GET INVOLVED</a>
@@ -66,23 +72,23 @@
             <div class="grid-3 features-grid">
                 <div class="feature-card card">
                     <i class="fa-solid fa-gavel feature-icon"></i>
-                    <h3>Legal Advocacy & Action</h3>
-                    <p>Fighting for Justice & Constitutional Rights.</p>
+                    <h3 data-key="feat-1-title">Legal Advocacy & Action</h3>
+                    <p data-key="feat-1-text">Fighting for Justice & Constitutional Rights.</p>
                 </div>
                 <div class="feature-card card">
                     <i class="fa-solid fa-book-open feature-icon"></i>
-                    <h3>Research & Documentation</h3>
-                    <p>Investigating & Reporting on Unlawful Activities.</p>
+                    <h3 data-key="feat-2-title">Research & Documentation</h3>
+                    <p data-key="feat-2-text">Investigating & Reporting on Unlawful Activities.</p>
                 </div>
                 <div class="feature-card card">
                     <i class="fa-solid fa-chalkboard-user feature-icon"></i>
-                    <h3>Legal Awareness Camps</h3>
-                    <p>Empowering Citizens with Legal Knowledge.</p>
+                    <h3 data-key="feat-3-title">Legal Awareness Camps</h3>
+                    <p data-key="feat-3-text">Empowering Citizens with Legal Knowledge.</p>
                 </div>
                 <div class="feature-card card">
                     <i class="fa-solid fa-user-secret feature-icon"></i>
-                    <h3>Whistleblower Platform</h3>
-                    <p>Confidential Reporting for Corruption & Security Issues.</p>
+                    <h3 data-key="feat-4-title">Whistleblower Platform</h3>
+                    <p data-key="feat-4-text">Confidential Reporting for Corruption & Security Issues.</p>
                 </div>
             </div>
         </div>
@@ -100,18 +106,18 @@
                     <a href="get-involved.html" class="small-btn">Enquiry</a>
                 </div> -->
                 <div class="cta-box red">
-                    <h4>Make a Financial Contribution</h4>
-                    <p>Fund Our Legal Efforts</p>
+                    <h4 data-key="support-1-title">Make a Financial Contribution</h4>
+                    <p data-key="support-1-text">Fund Our Legal Efforts</p>
                     <a href="get-involved.html" class="small-btn">Donate</a>
                 </div>
                 <div class="cta-box green">
-                    <h4>Become a Whistleblower</h4>
-                    <p>Report Corruption Safely</p>
+                    <h4 data-key="support-2-title">Become a Whistleblower</h4>
+                    <p data-key="support-2-text">Report Corruption Safely</p>
                     <a href="grievance.html" class="small-btn">Enquiry</a>
                 </div>
                 <div class="cta-box navy">
-                    <h4>Partner with Us</h4>
-                    <p>Collaborate for Change</p>
+                    <h4 data-key="support-3-title">Partner with Us</h4>
+                    <p data-key="support-3-text">Collaborate for Change</p>
                     <a href="contact.html" class="small-btn">Enquiry</a>
                 </div>
             </div>
@@ -163,6 +169,7 @@
         </div>
     </footer>
 
+    <script src="site-content.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

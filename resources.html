@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources | LRPF</title>
+    <title>Resources | Legal Rights Protection Forum</title>
     <link rel="icon" href="Images/Logo.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -22,7 +22,13 @@
     <header>
         <div class="container">
             <nav>
-                <a href="index.html" class="logo"><img src="Images/Logo.png" alt="LRPF Logo" height="50"> LRPF</a>
+                <a href="index.html" class="logo">
+                    <img src="Images/Logo.png" alt="Legal Rights Protection Forum Logo" height="50">
+                    <span class="logo-text">
+                        <span class="logo-line1">Legal Rights</span>
+                        <span class="logo-line2">Protection Forum</span>
+                    </span>
+                </a>
                 <div class="menu-toggle"><i class="fas fa-bars"></i></div>
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
@@ -34,17 +40,11 @@
                     <li><a href="contact.html">Contact</a></li>
                     <li><a href="grievance.html" class="nav-btn">Report Grievance</a></li>
                 </ul>
+                <a href="get-involved.html" class="donate-btn">DONATE</a>
             </nav>
         </div>
     </header>
 
-    <!-- Page Title -->
-    <section class="bg-light section-padding" style="padding-bottom: 20px;">
-        <div class="container text-center">
-            <h2>Knowledge & News</h2>
-            <p>Empowering citizens with information and legal resources.</p>
-        </div>
-    </section>
 
     <!-- News Corner -->
     <section class="section-padding">
@@ -52,8 +52,8 @@
             <h3>News Corner</h3>
             <div class="grid-3">
                 <div class="card">
-                    <h4>News Corner</h4>
-                    <p>Our work has garnered national attention. From preventing foreign preachers with extremist views from entering India to exposing large-scale FCRA violations and forced conversion networks, our interventions are regularly featured in the media. Stay updated on our latest coverage.</p>
+                    <h4 data-key="res-news-title">News Corner</h4>
+                    <p data-key="res-news-text">Our work has garnered national attention. From preventing foreign preachers with extremist views from entering India to exposing large-scale FCRA violations and forced conversion networks, our interventions are regularly featured in the media. Stay updated on our latest coverage.</p>
                 </div>
             </div>
         </div>
@@ -66,23 +66,23 @@
             <div class="grid-2">
                 <div class="card text-center">
                     <i class="fas fa-gavel" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 15px;"></i>
-                    <h4>Important Judgments</h4>
-                    <p>A collection of key court rulings relevant to FCRA, national security, religious freedom, and governance.</p>
+                    <h4 data-key="res-kb-1-title">Important Judgments</h4>
+                    <p data-key="res-kb-1-text">A collection of key court rulings relevant to FCRA, national security, religious freedom, and governance.</p>
                 </div>
                 <div class="card text-center">
                     <i class="fas fa-file-contract" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 15px;"></i>
-                    <h4>Government Orders (GOs)</h4>
-                    <p>Important government orders from Andhra Pradesh and Telangana, documented for reference and analysis.</p>
+                    <h4 data-key="res-kb-2-title">Government Orders (GOs)</h4>
+                    <p data-key="res-kb-2-text">Important government orders from Andhra Pradesh and Telangana, documented for reference and analysis.</p>
                 </div>
                 <div class="card text-center">
                     <i class="fas fa-book-open" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 15px;"></i>
-                    <h4>Important Laws</h4>
-                    <p>Simplified references to vital legislation that guides our work, including the FCRA and the Constitution.</p>
+                    <h4 data-key="res-kb-3-title">Important Laws</h4>
+                    <p data-key="res-kb-3-text">Simplified references to vital legislation that guides our work, including the FCRA and the Constitution.</p>
                 </div>
                 <div class="card text-center">
                     <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 15px;"></i>
-                    <h4>Miscellaneous</h4>
-                    <p>Research notes, policy briefs, and other reference materials for legal activism.</p>
+                    <h4 data-key="res-kb-4-title">Miscellaneous</h4>
+                    <p data-key="res-kb-4-text">Research notes, policy briefs, and other reference materials for legal activism.</p>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-col">
-                    <h4>LRPF</h4>
+                    <h4>Legal Rights Protection Forum</h4>
                     <p>Protecting Rights. Ensuring Accountability.</p>
                     <p>Email: <a href="mailto:contact.lrpf@gmail.com">contact.lrpf@gmail.com</a></p>
                 </div>
@@ -120,5 +120,6 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="site-content.js"></script>
 </body>
 </html>
