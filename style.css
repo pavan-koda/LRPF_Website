@@ -84,8 +84,8 @@ nav {
 
 /* --- Hero Section --- */
 .hero {
-    background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), url('https://via.placeholder.com/1920x600?text=Legal+Rights+Protection');
-    background-size: cover;
+    background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), url('Images/Banner1.png');
+    background-size:auto;
     background-position: center;
     color: var(--white);
     padding: 120px 0;
@@ -415,7 +415,7 @@ footer {
 
 .hero {
     position: relative;
-    background: linear-gradient(rgba(10,10,10,0.25), rgba(10,10,10,0.25)), url('Images/hero.jpg');
+    background: linear-gradient(rgba(10,10,10,0.25), rgba(10,10,10,0.25)), url('Images/Banner1.png');
     background-size: cover;
     background-position: center center;
     color: var(--white);
