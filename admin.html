@@ -37,6 +37,12 @@
         }
         .login-btn:hover { background: #a93226; }
         .login-error { color: #c0392b; margin-top: 12px; font-size: 0.9rem; min-height: 22px; }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%,60%  { transform: translateX(-7px); }
+            40%,80%  { transform: translateX(7px); }
+        }
+        .login-error.shake { animation: shake 0.4s ease; }
 
         /* ===== ADMIN PANEL LAYOUT ===== */
         #admin-panel { display: none; min-height: 100vh; }
@@ -248,6 +254,40 @@
             .img-upload-section { flex-direction: column; }
             .img-preview-box, .img-preview-box.wide { width: 100%; height: 150px; }
         }
+
+        /* ===== MOBILE (small screens) ===== */
+        .mobile-topbar {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            height: 54px; background: #1a252f;
+            align-items: center; padding: 0 14px; gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .mobile-topbar img { height: 32px; width: 32px; object-fit: contain; background:#fff; border-radius:5px; padding:2px; }
+        .mobile-topbar span { color: #ecf0f1; font-weight: 700; font-size: 0.95rem; flex: 1; }
+        .hamburger-btn {
+            background: none; border: none; cursor: pointer;
+            display: flex; flex-direction: column; gap: 5px; padding: 4px;
+        }
+        .hamburger-btn span {
+            display: block; width: 22px; height: 2px; background: #ecf0f1;
+            border-radius: 2px; transition: all 0.25s;
+        }
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 149;
+        }
+        @media (max-width: 600px) {
+            .mobile-topbar { display: flex; }
+            .sidebar {
+                top: 54px; width: 230px;
+                transform: translateX(-100%);
+                transition: transform 0.28s ease;
+                z-index: 150;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main-content { margin-left: 0; padding: 80px 14px 24px; }
+        }
     </style>
 </head>
 <body>
@@ -272,8 +312,18 @@
 <!-- ==================== ADMIN PANEL ==================== -->
 <div id="admin-panel">
 
+    <!-- Mobile top bar -->
+    <div class="mobile-topbar" id="mobile-topbar">
+        <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <img src="Images/Logo.png" alt="LRPF">
+        <span>LRPF Admin</span>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="admin-sidebar">
         <div class="sidebar-header">
             <img src="Images/Logo.png" alt="LRPF" id="sidebar-logo">
             <div class="sidebar-brand">
@@ -654,6 +704,31 @@
                 <button class="save-btn" onclick="changePassword()"><i class="fas fa-key"></i> Change Password</button>
             </div>
 
+            <!-- Publish Live -->
+            <div class="section-card">
+                <h2><i class="fas fa-globe"></i> Publish to Website</h2>
+                <p style="color:#555;margin-bottom:14px;">
+                    Instantly pushes all your saved changes to the live website.
+                    No uploading, no downloading — changes go live in seconds.
+                </p>
+                <button class="save-btn" id="publish-all-btn" onclick="publishAllPages()" style="background:#1a7f4b;font-size:1rem;padding:12px 28px;">
+                    <i class="fas fa-globe"></i> Publish All Pages Live
+                </button>
+                <div style="margin-top:18px;">
+                    <p style="color:#777;font-size:0.88rem;margin-bottom:10px;">Or publish a single page:</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <button class="save-btn" onclick="publishSinglePage('index.html')" style="font-size:0.82rem;padding:7px 14px;">index.html</button>
+                        <button class="save-btn" onclick="publishSinglePage('about.html')" style="font-size:0.82rem;padding:7px 14px;">about.html</button>
+                        <button class="save-btn" onclick="publishSinglePage('work.html')" style="font-size:0.82rem;padding:7px 14px;">work.html</button>
+                        <button class="save-btn" onclick="publishSinglePage('gallery.html')" style="font-size:0.82rem;padding:7px 14px;">gallery.html</button>
+                        <button class="save-btn" onclick="publishSinglePage('get-involved.html')" style="font-size:0.82rem;padding:7px 14px;">get-involved.html</button>
+                        <button class="save-btn" onclick="publishSinglePage('resources.html')" style="font-size:0.82rem;padding:7px 14px;">resources.html</button>
+                        <button class="save-btn" onclick="publishSinglePage('contact.html')" style="font-size:0.82rem;padding:7px 14px;">contact.html</button>
+                        <button class="save-btn" onclick="publishSinglePage('grievance.html')" style="font-size:0.82rem;padding:7px 14px;">grievance.html</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Reset -->
             <div class="section-card">
                 <h2><i class="fas fa-undo"></i> Reset All Content</h2>
@@ -676,6 +751,9 @@ const DEFAULT_PASSWORD = 'lrpf@2026';
 function g(key) { return localStorage.getItem(P + key); }
 function s(key, val) { localStorage.setItem(P + key, val); }
 function rm(key) { localStorage.removeItem(P + key); }
+
+/* Password kept in memory for write-file.php requests */
+var adminPassword = sessionStorage.getItem('lrpf_pwd') || '';
 
 /* --- Default content (exact match to HTML pages) --- */
 const DEFAULTS = {
@@ -789,10 +867,19 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     const pwd = document.getElementById('pwd-input').value;
     const storedPwd = g('admin_pwd') || DEFAULT_PASSWORD;
     if (pwd === storedPwd) {
+        adminPassword = pwd;
+        sessionStorage.setItem('lrpf_pwd', pwd);
         s('admin_session', '1');
         showPanel();
     } else {
-        document.getElementById('login-error').textContent = 'Incorrect password. Try again.';
+        const errEl = document.getElementById('login-error');
+        document.getElementById('pwd-input').value = '';
+        errEl.classList.remove('shake');
+        errEl.textContent = '';
+        // Force reflow so animation re-triggers every attempt
+        void errEl.offsetWidth;
+        errEl.textContent = 'Incorrect password. Try again.';
+        errEl.classList.add('shake');
     }
 });
 
@@ -800,6 +887,25 @@ document.getElementById('logout-btn').addEventListener('click', function() {
     rm('admin_session');
     location.reload();
 });
+
+/* ===== Mobile sidebar toggle ===== */
+(function() {
+    var sidebar  = document.getElementById('admin-sidebar');
+    var overlay  = document.getElementById('sidebar-overlay');
+    var hamburger = document.getElementById('hamburger-btn');
+    function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('open'); }
+    function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    overlay.addEventListener('click', closeSidebar);
+    // Close sidebar when a nav item is tapped on mobile
+    document.querySelectorAll('.nav-item').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (window.innerWidth <= 600) closeSidebar();
+        });
+    });
+})();
 
 function showPanel() {
     document.getElementById('login-screen').style.display = 'none';
@@ -1077,6 +1183,23 @@ function saveAboutSection(key) {
 }
 
 /* ===================== IMAGE UPLOAD ===================== */
+
+/* Upload base64 image to server → saves as real file in /uploads/ */
+function uploadImage(filename, base64data, callback) {
+    if (!adminPassword) { callback(null, base64data); return; } // no server: keep base64
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'write-file.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function() {
+        try {
+            var res = JSON.parse(xhr.responseText);
+            callback(res.ok ? res.msg : null, res.ok ? null : base64data);
+        } catch(e) { callback(null, base64data); }
+    };
+    xhr.onerror = function() { callback(null, base64data); };
+    xhr.send(JSON.stringify({ pwd: adminPassword, action: 'upload-image', filename: filename, data: base64data }));
+}
+
 function handleImgUpload(event, key, previewId) {
     var file = event.target.files[0];
     if (!file) return;
@@ -1088,16 +1211,24 @@ function handleImgUpload(event, key, previewId) {
     var reader = new FileReader();
     reader.onload = function(e) {
         var b64 = e.target.result;
-        try {
-            s(key, b64);
-            if (previewId) document.getElementById(previewId).src = b64;
-            if (key === 'logo') {
-                document.getElementById('sidebar-logo').src = b64;
+        // Show preview immediately
+        if (previewId) document.getElementById(previewId).src = b64;
+        if (key === 'logo') document.getElementById('sidebar-logo').src = b64;
+        showToast('Uploading image...');
+        // Upload to server as a real file
+        var ext = file.name.split('.').pop().toLowerCase();
+        var serverName = key.replace(/_/g, '-') + '.' + ext;
+        uploadImage(serverName, b64, function(url, fallbackB64) {
+            var src = url || fallbackB64;
+            s(key, src);
+            if (url) {
+                if (previewId) document.getElementById(previewId).src = url;
+                if (key === 'logo') document.getElementById('sidebar-logo').src = url;
+                showToast('Image saved to server!');
+            } else {
+                showToast('Image saved locally (publish to push it live).');
             }
-            showToast('Image uploaded & saved!');
-        } catch(err) {
-            showToast('Storage full! Try a smaller image.', true);
-        }
+        });
     };
     reader.readAsDataURL(file);
 }
@@ -1151,25 +1282,30 @@ function addGalleryItems() {
     var total = files.length;
     var done = 0;
 
+    var ts = Date.now();
     files.forEach(function(file, idx) {
         var reader = new FileReader();
         reader.onload = function(e) {
-            // Build caption: prefix + number if multiple, or filename if no prefix
             var caption;
             if (prefix) {
                 caption = total > 1 ? prefix + ' ' + (idx + 1) : prefix;
             } else {
                 caption = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
             }
-            galleryItems.push({ src: e.target.result, caption: caption });
-            done++;
-            if (done === total) {
-                renderGalleryAdmin();
-                document.getElementById('gallery-new-caption').value = '';
-                fileInput.value = '';
-                document.getElementById('file-count-label').textContent = '';
-                showToast(total + ' image' + (total > 1 ? 's' : '') + ' added! Click "Save Gallery" to publish.');
-            }
+            var b64 = e.target.result;
+            var ext = file.name.split('.').pop().toLowerCase();
+            var serverName = 'gallery-' + ts + '-' + idx + '.' + ext;
+            uploadImage(serverName, b64, function(url, fallback) {
+                galleryItems.push({ src: url || fallback, caption: caption });
+                done++;
+                if (done === total) {
+                    renderGalleryAdmin();
+                    document.getElementById('gallery-new-caption').value = '';
+                    fileInput.value = '';
+                    document.getElementById('file-count-label').textContent = '';
+                    showToast(total + ' image' + (total > 1 ? 's' : '') + ' added! Click "Save Gallery" to publish.');
+                }
+            });
         };
         reader.readAsDataURL(file);
     });
@@ -1219,6 +1355,13 @@ function changePassword() {
     if (nw !== cnf)        { showToast('New passwords do not match.', true); return; }
 
     s('admin_pwd', nw);
+    adminPassword = nw;
+    sessionStorage.setItem('lrpf_pwd', nw);
+    // Sync new password to write-file.php so publish still works
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'write-file.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({ pwd: cur, action: 'change-password', new_pwd: nw }));
     document.getElementById('f-pwd-current').value = '';
     document.getElementById('f-pwd-new').value = '';
     document.getElementById('f-pwd-confirm').value = '';
@@ -1280,17 +1423,23 @@ function addBannerImages() {
     var oversized = files.filter(function(f) { return f.size > 4 * 1024 * 1024; });
     if (oversized.length) { showToast(oversized.length + ' file(s) exceed 4MB limit.', true); return; }
     var done = 0;
-    files.forEach(function(file) {
+    var ts = Date.now();
+    files.forEach(function(file, idx) {
         var reader = new FileReader();
         reader.onload = function(e) {
-            bannerItems.push({ src: e.target.result });
-            done++;
-            if (done === files.length) {
-                renderBannerAdmin();
-                fileInput.value = '';
-                document.getElementById('banner-count-label').textContent = '';
-                showToast(files.length + ' banner(s) added! Click "Save Banners" to publish.');
-            }
+            var b64 = e.target.result;
+            var ext = file.name.split('.').pop().toLowerCase();
+            var serverName = 'banner-' + ts + '-' + idx + '.' + ext;
+            uploadImage(serverName, b64, function(url, fallback) {
+                bannerItems.push({ src: url || fallback });
+                done++;
+                if (done === files.length) {
+                    renderBannerAdmin();
+                    fileInput.value = '';
+                    document.getElementById('banner-count-label').textContent = '';
+                    showToast(files.length + ' banner(s) added! Click "Save Banners" to publish.');
+                }
+            });
         };
         reader.readAsDataURL(file);
     });
@@ -1338,6 +1487,168 @@ function escHtml(str) {
 }
 function escAttr(str) {
     return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* ===================== PUBLISH =====================
+ * Fetches each HTML page, bakes in all saved content,
+ * then POSTs to write-file.php which saves it directly
+ * on the server — changes go live instantly.
+ * ==================================================== */
+var SITE_PAGES = [
+    'index.html', 'about.html', 'work.html', 'gallery.html',
+    'get-involved.html', 'resources.html', 'contact.html', 'grievance.html'
+];
+
+function applyContentToDoc(doc) {
+    // Logo
+    var logo = g('logo');
+    if (logo) {
+        doc.querySelectorAll('header .logo img').forEach(function(el) { el.src = logo; });
+        var fav = doc.querySelector('link[rel="icon"]');
+        if (fav) fav.href = logo;
+    }
+    // About page logo
+    var aboutLogo = g('about_logo') || logo;
+    if (aboutLogo) {
+        doc.querySelectorAll('.about-page-logo').forEach(function(el) { el.src = aboutLogo; });
+    }
+    // Hero banner slides
+    var heroSlides = doc.getElementById('hero-slides');
+    if (heroSlides) {
+        var bannersData = g('banners');
+        if (bannersData) {
+            try {
+                var banners = JSON.parse(bannersData);
+                if (banners && banners.length) {
+                    heroSlides.innerHTML = banners.map(function(b) {
+                        return '<div class="hero-slide" style="background-image:url(\'' + b.src + '\')"></div>';
+                    }).join('');
+                }
+            } catch(e) {}
+        } else {
+            var heroBg = g('hero_bg');
+            if (heroBg) {
+                var firstSlide = heroSlides.querySelector('.hero-slide');
+                if (firstSlide) firstSlide.style.backgroundImage = 'url("' + heroBg + '")';
+            }
+        }
+    }
+    // data-key elements (text, html, src)
+    doc.querySelectorAll('[data-key]').forEach(function(el) {
+        var key = el.getAttribute('data-key');
+        var val = g(key);
+        if (val === null || val === '') return;
+        var type = el.getAttribute('data-key-type') || 'text';
+        if (type === 'html') el.innerHTML = val;
+        else if (type === 'src') el.src = val;
+        else el.textContent = val;
+    });
+    // Gallery
+    var galleryGrid = doc.querySelector('.gallery-grid');
+    if (galleryGrid) {
+        var gd = g('gallery');
+        if (gd) {
+            try {
+                var items = JSON.parse(gd);
+                if (items && items.length) {
+                    galleryGrid.innerHTML = items.map(function(item) {
+                        return '<div class="gallery-item">' +
+                            '<img src="' + item.src + '" alt="' + escHtml(item.caption) + '">' +
+                            '<div class="gallery-caption">' + escHtml(item.caption) + '</div>' +
+                            '</div>';
+                    }).join('');
+                }
+            } catch(e) {}
+        }
+    }
+    // Email
+    var email = g('email');
+    if (email) {
+        doc.querySelectorAll('a[href^="mailto:"]').forEach(function(el) {
+            el.href = 'mailto:' + email;
+            if (el.textContent.indexOf('@') !== -1) el.textContent = email;
+        });
+    }
+    // Social links
+    [['social_twitter','Twitter'],['social_facebook','Facebook'],
+     ['social_threads','Threads'],['social_youtube','YouTube']].forEach(function(pair) {
+        var val = g(pair[0]);
+        if (!val) return;
+        doc.querySelectorAll('a[title*="' + pair[1] + '"]').forEach(function(el) { el.href = val; });
+    });
+}
+
+
+/* Generate updated HTML for a page, then call callback(err, htmlString) */
+function generatePage(filename, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', filename + '?v=' + Date.now(), true);
+    xhr.onload = function() {
+        if (xhr.status !== 200) { callback('Could not fetch ' + filename, null); return; }
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(xhr.responseText, 'text/html');
+        applyContentToDoc(doc);
+        callback(null, '<!DOCTYPE html>\n' + doc.documentElement.outerHTML);
+    };
+    xhr.onerror = function() { callback('Network error on ' + filename, null); };
+    xhr.send(null);
+}
+
+/* Write generated HTML directly to server via write-file.php */
+function publishPage(filename, callback) {
+    if (!adminPassword) {
+        var p = prompt('Enter admin password to publish:');
+        if (!p) { callback('Cancelled'); return; }
+        adminPassword = p;
+        sessionStorage.setItem('lrpf_pwd', p);
+    }
+    generatePage(filename, function(err, html) {
+        if (err) { callback(err); return; }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'write-file.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+            try {
+                var res = JSON.parse(xhr.responseText);
+                if (!res.ok) { callback(res.msg || 'Write failed'); return; }
+                callback(null);
+            } catch(e) { callback('Server error'); }
+        };
+        xhr.onerror = function() { callback('Could not reach write-file.php'); };
+        xhr.send(JSON.stringify({ pwd: adminPassword, action: 'write', file: filename, content: html }));
+    });
+}
+
+function publishAllPages() {
+    var btn = document.getElementById('publish-all-btn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...'; }
+    var pages = SITE_PAGES.slice();
+    var errors = [];
+
+    function next(i) {
+        if (i >= pages.length) {
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-globe"></i> Publish All Pages Live'; }
+            if (errors.length) {
+                showToast('Errors on: ' + errors.join(', '), true);
+            } else {
+                showToast('All ' + pages.length + ' pages are now live on your website!');
+            }
+            return;
+        }
+        publishPage(pages[i], function(err) {
+            if (err) errors.push(pages[i]);
+            next(i + 1);
+        });
+    }
+    next(0);
+}
+
+function publishSinglePage(filename) {
+    showToast('Publishing ' + filename + '...');
+    publishPage(filename, function(err) {
+        if (err) showToast('Error: ' + err, true);
+        else showToast(filename + ' is now live!');
+    });
 }
 </script>
 </body>

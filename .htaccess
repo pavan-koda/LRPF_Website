@@ -1,0 +1,5 @@
+# Protect admin config from direct browser access
+<Files "admin-config.json">
+    Order allow,deny
+    Deny from all
+</Files>
